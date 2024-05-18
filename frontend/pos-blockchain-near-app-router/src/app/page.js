@@ -75,12 +75,12 @@ export default function Home() {
           <div className="col-md-8 d-flex flex-column align-items-center flex-wrap justify-content-center mb-3">
             {listOfItems.map((item) => {
               return (
-                <div className="container">
+                <div className="container" key={item.name}>
                   <div className="row d-flex align-items-center justify-content-center">
                     <div className="col p-1 d-flex justify-content-center">
                       <Image src={item.imgName} alt={item.name} height={100} />
                     </div>
-                    <div key={item.name} className="col p-1">
+                    <div className="col p-1">
                       <h2 className="fs-4">
                         {item.quantity} x {item.name}
                       </h2>
