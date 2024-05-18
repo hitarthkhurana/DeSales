@@ -4,10 +4,35 @@ import "bootstrap/dist/css/bootstrap.css";
 import NavBar from "../components/NavBar";
 import Image from "next/image";
 import banana from "../../public/banana.png";
+import Link from "next/link";
 
 export default function Home() {
   const handleClickEvent = () => {
-    alert("Checkout completed!");
+    const customerData = {
+      id: "123456",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phone: "123-456-7890",
+      address: {
+        street: "123 Main St",
+        city: "Anytown",
+        state: "CA",
+        zip: "12345",
+      },
+      orders: [
+        {
+          orderId: "78901",
+          product: "Banana",
+          quantity: 1,
+          price: 1.74,
+          last4Digits: "4534",
+          date: new Date().toISOString(),
+        },
+      ],
+    };
+
+    console.log("Checkout completed!", customerData);
   };
 
   return (
@@ -23,6 +48,9 @@ export default function Home() {
           <button className="btn btn-primary" onClick={handleClickEvent}>
             Checkout
           </button>
+        </div>
+        <div className="column d-flex align-items-center justify-content-center p-5">
+          <Link href={"/hello-near"}>Read the APIs</Link>
         </div>
       </div>
     </div>
