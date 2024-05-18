@@ -1,12 +1,12 @@
 "use client";
 
 import "bootstrap/dist/css/bootstrap.css";
-import NavBar from "../components/NavBar";
 import Image from "next/image";
-import banana from "../../public/banana.png";
-import apple from "../../public/apple.png";
-import doritos from "../../public/doritos.png";
 import Link from "next/link";
+import apple from "../../public/apple.png";
+import banana from "../../public/banana.png";
+import doritos from "../../public/doritos.png";
+import NavBar from "../components/NavBar";
 
 export default function Home() {
   const handleClickEvent = () => {
@@ -23,15 +23,16 @@ export default function Home() {
         zip: "12345",
       },
       orders: [
-        {
-          orderId: "78901",
-          product: "Banana",
-          quantity: 1,
-          price: 1.74,
-          last4Digits: "4534",
-          date: new Date().toISOString(),
-        },
-        // Add more items to the orders array as needed
+        listOfItems.map((item) => {
+          return {
+            orderId: "12345",
+            product: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            last4Digits: "1234",
+            date: new Date().toISOString(),
+          };
+        }),
       ],
     };
 
@@ -68,32 +69,39 @@ export default function Home() {
   return (
     <div className="container p-5">
       <NavBar />
-      <div className="border border-info rounded p-3 text-center">
-        <h1 className="fs-2 mb-3">Walmart PoS</h1>
-        <div className="column d-flex flex-column align-items-center mb-3">
-          <div className="mb-3">
+      <div className="border border-info rounded p-3">
+        <h1 className="fs-2 mb-3 text-center">Walmart PoS</h1>
+        <div className="row">
+          <div className="col-md-8 d-flex flex-column align-items-center flex-wrap justify-content-center mb-3">
             {listOfItems.map((item) => {
               return (
-                <div key={item.name}>
-                  <Image src={item.imgName} alt={item.name} height={100} />
-                  <h2 className="fs-4">
-                    {item.quantity} x {item.name}
-                  </h2>
-                  <h3 className="fs-5">$ {item.price}</h3>
+                <div className="container">
+                  <div className="row d-flex align-items-center justify-content-center">
+                    <div className="col p-1 d-flex justify-content-center">
+                      <Image src={item.imgName} alt={item.name} height={100} />
+                    </div>
+                    <div key={item.name} className="col p-1">
+                      <h2 className="fs-4">
+                        {item.quantity} x {item.name}
+                      </h2>
+                      <h3 className="fs-5">$ {item.price}</h3>
+                    </div>
+                  </div>
                 </div>
               );
             })}
           </div>
+          <div className="col-md-4 d-flex flex-column align-items-center justify-content-center">
+            <div className="text-center">
+              <h4 className="fw-bold">Subtotal: $ {totalSum.toFixed(2)}</h4>
+              <h4 className="fw-bold">Tax (13%): $ {tax.toFixed(2)}</h4>
+              <h2 className="fw-bold">Total: $ {totalMoney.toFixed(2)}</h2>
+            </div>
+            <button className="btn btn-primary mt-3" onClick={handleClickEvent}>
+              Checkout
+            </button>
+          </div>
         </div>
-        <hr className="my-4" />
-        <div className="text-center">
-          <h4 className="fw-bold">Subtotal: $ {totalSum.toFixed(2)}</h4>
-          <h4 className="fw-bold">Tax (13%): $ {tax.toFixed(2)}</h4>
-          <h2 className="fw-bold">Total: $ {totalMoney.toFixed(2)}</h2>
-        </div>
-        <button className="btn btn-primary mt-3" onClick={handleClickEvent}>
-          Checkout
-        </button>
       </div>
       <div className="text-center mt-3">
         <Link href={"/hello-near"}>Read the APIs</Link>
