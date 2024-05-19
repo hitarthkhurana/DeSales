@@ -43,12 +43,16 @@ const BarcodeScanner = ({ onBarcodeDetect }) => {
     startBarcodeScanner();
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
+      if (videoRef.current) {
+        if (videoRef.current.srcObject) {
+          videoRef.current.srcObject
+            .getTracks()
+            .forEach((track) => track.stop());
+          videoRef.current.srcObject = null;
+        }
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+        }
       }
     };
   }, [onBarcodeDetect]);

@@ -3,8 +3,10 @@
 import { useState, useRef } from "react";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BarcodePage = () => {
+  const router = useRouter();
   const [detectedBarcode, setDetectedBarcode] = useState(null);
   const scannerRef = useRef(null);
 
@@ -14,6 +16,7 @@ const BarcodePage = () => {
     if (scannerRef.current) {
       scannerRef.current.stopBarcodeScanner();
     }
+    router.push("/");
   };
 
   return (
