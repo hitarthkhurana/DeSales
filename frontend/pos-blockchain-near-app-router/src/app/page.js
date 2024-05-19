@@ -98,6 +98,9 @@ function Home() {
     };
 
     console.log("Checkout completed!", customerData);
+    window.alert("Checkout completed! Check out the blockchain backend!");
+    localStorage.removeItem("cartItems");
+    window.location.reload();
   };
 
   const handleAddToCart = () => {
