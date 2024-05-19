@@ -8,6 +8,8 @@ import apple from "../../public/apple.png";
 import banana from "../../public/banana.png";
 import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
+import { Wallet } from "@/wallets/near";
+import { utils } from "near-api-js";
 
 function Home() {
   const [listOfItems, setListOfItems] = useState([]);
@@ -15,6 +17,7 @@ function Home() {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showDiscountMessage, setShowDiscountMessage] = useState(false);
   const [totalFruits, setTotalFruits] = useState(0);
+  const [wallet, setWallet] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -23,6 +26,25 @@ function Home() {
         : [];
       setListOfItems(cartItems);
     }
+  }, []);
+
+  useEffect(() => {
+    const walletInstance = new Wallet({
+      networkId: "testnet",
+      createAccessKeyFor: "bigpandaproject.testnet",
+    });
+    walletInstance
+      .startUp((signedAccountId) => {
+        if (signedAccountId) {
+          console.log("Signed in as:", signedAccountId);
+        }
+      })
+      .then((accountId) => {
+        if (accountId) {
+          console.log("Already signed in:", accountId);
+        }
+        setWallet(walletInstance);
+      });
   }, []);
 
   useEffect(() => {
@@ -56,25 +78,29 @@ function Home() {
 
       (async () => {
         const response = await fetchInformation(storedBarcode);
-        const productName = response.product.product_name;
-        const productImage = response.product.image_url;
-        console.log("Product Name:", productName);
-        console.log("Product Image:", productImage);
-        setListOfItems([
-          ...listOfItems,
-          {
-            name: productName,
-            img: productImage,
-            price: 1.99,
-            quantity: 1,
-          },
-        ]);
-        localStorage.removeItem("detectedBarcode");
+        if (response.product) {
+          const productName = response.product.product_name;
+          const productImage = response.product.image_url;
+          console.log("Product Name:", productName);
+          console.log("Product Image:", productImage);
+          setListOfItems([
+            ...listOfItems,
+            {
+              name: productName,
+              img: productImage,
+              price: 1.99,
+              quantity: 1,
+            },
+          ]);
+          localStorage.removeItem("detectedBarcode");
+        } else {
+          console.error("Product not found in the response");
+        }
       })();
     }
   }, [listOfItems]);
 
-  const handleClickEvent = () => {
+  const handleClickEvent = async () => {
     const customerData = {
       id: "123456",
       firstName: "John",
@@ -97,10 +123,42 @@ function Home() {
       })),
     };
 
+    const custData = {
+      item_description: listOfItems.reduce((description, item) => {
+        return description
+          ? `${description}, ${item.quantity} x ${item.name}`
+          : `${item.quantity} x ${item.name}`;
+      }, ""),
+      sale_id: 1,
+      seller: "bigpandaproject.testnet",
+    };
+
+    const priceInNear = utils.format.parseNearAmount(
+      (totalMoney / 7.85).toString()
+    );
+
+    if (wallet && wallet.isSignedIn()) {
+      try {
+        const transactionResult = await wallet.callMethod({
+          contractId: "bigpandaproject.testnet",
+          method: "record_sale",
+          args: custData,
+          gas: "30000000000000",
+          deposit: priceInNear,
+        });
+        console.log("Transaction successful:", transactionResult);
+      } catch (error) {
+        console.error("Transaction failed:", error);
+      }
+    } else {
+      console.error("Wallet not signed in or contract not set up");
+    }
+
     console.log("Checkout completed!", customerData);
     window.alert("Checkout completed! Check out the blockchain backend!");
     localStorage.removeItem("cartItems");
-    window.location.reload();
+    localStorage.removeItem("detectedBarcode");
+    // window.location.reload();
   };
 
   const handleAddToCart = () => {
