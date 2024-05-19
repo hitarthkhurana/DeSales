@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState } from "react";
+
 import "bootstrap/dist/css/bootstrap.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +11,10 @@ import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
 
 export default function Home() {
+  const [listOfItems, setListOfItems] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
   const handleClickEvent = () => {
     const customerData = {
       id: "123456",
@@ -22,43 +28,60 @@ export default function Home() {
         state: "CA",
         zip: "12345",
       },
-      orders: [
-        listOfItems.map((item) => {
-          return {
-            orderId: "12345",
-            product: item.name,
-            quantity: item.quantity,
-            price: item.price,
-            last4Digits: "1234",
-            date: new Date().toISOString(),
-          };
-        }),
-      ],
+      orders: listOfItems.map((item) => ({
+        orderId: "12345",
+        product: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        last4Digits: "1234",
+        date: new Date().toISOString(),
+      })),
     };
 
     console.log("Checkout completed!", customerData);
   };
 
-  const listOfItems = [
+  const handleAddToCart = () => {
+    if (selectedProduct && selectedQuantity > 0) {
+      const newItem = {
+        name: selectedProduct.name,
+        imgName: selectedProduct.imgName,
+        price: selectedProduct.price,
+        quantity: selectedQuantity,
+      };
+
+      const existingItemIndex = listOfItems.findIndex(
+        (item) => item.name === selectedProduct.name
+      );
+
+      if (existingItemIndex !== -1) {
+        const updatedItems = [...listOfItems];
+        updatedItems[existingItemIndex].quantity += selectedQuantity;
+        setListOfItems(updatedItems);
+      } else {
+        setListOfItems([...listOfItems, newItem]);
+      }
+    }
+  };
+
+  const allItems = [
     {
       name: "Banana",
       imgName: banana,
       price: 1.74,
-      quantity: 1,
     },
     {
       name: "Apple",
       imgName: apple,
       price: 2.7,
-      quantity: 2,
     },
     {
       name: "Doritos",
       imgName: doritos,
       price: 3.99,
-      quantity: 4,
     },
   ];
+
   const totalSum = listOfItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -72,34 +95,66 @@ export default function Home() {
       <div className="border border-info rounded p-3">
         <h1 className="fs-2 mb-3 text-center">Walmart PoS</h1>
         <div className="row">
-          <div className="col-md-8 d-flex flex-column align-items-center flex-wrap justify-content-center mb-3">
-            {listOfItems.map((item) => {
-              return (
-                <div className="container" key={item.name}>
-                  <div className="row d-flex align-items-center justify-content-center">
-                    <div className="col p-1 d-flex justify-content-center">
-                      <Image src={item.imgName} alt={item.name} height={100} />
-                    </div>
-                    <div className="col p-1">
-                      <h2 className="fs-4">
-                        {item.quantity} x {item.name}
-                      </h2>
-                      <h3 className="fs-5">$ {item.price}</h3>
-                    </div>
+          <div className="offset-md-1 col-md-4">
+            <div className="text-center mb-3">
+              <h3>Add Product to Cart</h3>
+              <select
+                className="form-select mb-2"
+                value={JSON.stringify(selectedProduct)}
+                onChange={(e) => setSelectedProduct(JSON.parse(e.target.value))}
+              >
+                <option value="">Select Product</option>
+                {allItems.map((item, index) => (
+                  <option key={index} value={JSON.stringify(item)}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                className="form-control mb-2"
+                value={selectedQuantity}
+                onChange={(e) =>
+                  setSelectedQuantity(parseInt(e.target.value) || 0)
+                }
+                min={0}
+              />
+              <button className="btn btn-success" onClick={handleAddToCart}>
+                Add to Cart
+              </button>
+            </div>
+            <h3>Cart</h3>
+            {listOfItems.map((item, index) => (
+              <div className="row mb-3" key={index}>
+                <div className="col-md-4">
+                  <Image src={item.imgName} alt={item.name} width={100} />
+                </div>
+                <div className="col-md-8">
+                  <div>
+                    <h5>{item.name}</h5>
+                    <p>
+                      Quantity: {item.quantity} <br />
+                      Price: ${item.price}
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-          <div className="col-md-4 d-flex flex-column align-items-center justify-content-center">
-            <div className="text-center">
-              <h4 className="fw-bold">Subtotal: $ {totalSum.toFixed(2)}</h4>
-              <h4 className="fw-bold">Tax (13%): $ {tax.toFixed(2)}</h4>
-              <h2 className="fw-bold">Total: $ {totalMoney.toFixed(2)}</h2>
+          <div className="col">
+            <div className="col-md-4 offset-md-5 d-flex flex-column align-items-center justify-content-center">
+              <div className="text-center">
+                <h4 className="fw-bold">Subtotal: ${totalSum.toFixed(2)}</h4>
+                <h4 className="fw-bold">Tax (13%): ${tax.toFixed(2)}</h4>
+                <h2 className="fw-bold">Total: ${totalMoney.toFixed(2)}</h2>
+              </div>
+              <button
+                className="btn btn-primary mt-3"
+                onClick={handleClickEvent}
+              >
+                Checkout
+              </button>
             </div>
-            <button className="btn btn-primary mt-3" onClick={handleClickEvent}>
-              Checkout
-            </button>
           </div>
         </div>
       </div>
