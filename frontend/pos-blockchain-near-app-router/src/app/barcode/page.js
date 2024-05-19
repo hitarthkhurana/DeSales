@@ -12,10 +12,20 @@ const BarcodePage = () => {
   };
 
   return (
-    <div>
-      <h1>Barcode Scanner</h1>
-      <BarcodeScanner onBarcodeDetect={handleBarcodeDetect} />
-      {detectedBarcode && <p>Detected Barcode: {detectedBarcode}</p>}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        textAlign: "center",
+      }}
+    >
+      <div>
+        <h1>Scan your product via Barcode!</h1>
+        <BarcodeScanner onBarcodeDetect={handleBarcodeDetect} />
+        {detectedBarcode && <p>Detected Barcode: {detectedBarcode}</p>}
+      </div>
     </div>
   );
 };
