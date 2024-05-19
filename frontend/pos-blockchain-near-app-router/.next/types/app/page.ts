@@ -1,4 +1,4 @@
-// File: /Users/sargunsinghbhatti/Documents/Documents - Sargun’s MacBook Air/GitHub/Big-Panda-Project/frontend/pos-blockchain-near-app-router/src/app/page.js
+// File: /Users/sargunsinghbhatti/Documents/Documents - Sargun’s MacBook Air/GitHub/DeSales/frontend/pos-blockchain-near-app-router/src/app/page.js
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

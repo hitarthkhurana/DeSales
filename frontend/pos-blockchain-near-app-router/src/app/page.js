@@ -10,15 +10,20 @@ import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
 
 function Home() {
-  const [listOfItems, setListOfItems] = useState(
-    localStorage.getItem("cartItems")
-      ? JSON.parse(localStorage.getItem("cartItems"))
-      : []
-  );
+  const [listOfItems, setListOfItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showDiscountMessage, setShowDiscountMessage] = useState(false);
   const [totalFruits, setTotalFruits] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cartItems = localStorage.getItem("cartItems")
+        ? JSON.parse(localStorage.getItem("cartItems"))
+        : [];
+      setListOfItems(cartItems);
+    }
+  }, []);
 
   useEffect(() => {
     // Calculate the total number of fruits
