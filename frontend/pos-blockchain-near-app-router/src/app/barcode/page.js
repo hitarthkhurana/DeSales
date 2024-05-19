@@ -15,10 +15,12 @@ const BarcodePage = () => {
     if (scannerRef.current) {
       scannerRef.current.stopBarcodeScanner();
     }
-    router.push({
-      pathname: "/",
-      query: { barcode },
-    });
+    if (typeof barcode === "string") {
+      console.log("Detected barcode:", barcode);
+      router.push("/");
+    } else {
+      console.error("Detected barcode is not a string:", barcode);
+    }
   };
 
   return (
@@ -30,17 +32,22 @@ const BarcodePage = () => {
         height: "100vh",
         textAlign: "center",
       }}
+      className="container"
     >
-      <div>
-        <h1>Scan your product via Barcode!</h1>
-        <BarcodeScanner 
-ref ={scannerRef}        onBarcodeDetect={handleBarcodeDetect} />
-        {detectedBarcode && <p>Detected Barcode: {detectedBarcode}</p>}
-        <Link href="/">
-          <button className="btn btn-primary mt-3">
-            Return to Cart
-          </button>
-        </Link>
+      <div className="column">
+        <div className="row">
+          <h1>Scan your product via Barcode!</h1>
+          <BarcodeScanner
+            ref={scannerRef}
+            onBarcodeDetect={handleBarcodeDetect}
+          />
+        </div>
+        <div className="row">
+          {detectedBarcode && <p>Detected Barcode: {detectedBarcode}</p>}
+          <Link href="/">
+            <button className="btn btn-primary mt-3">Return to Cart</button>
+          </Link>
+        </div>
       </div>
     </div>
   );
