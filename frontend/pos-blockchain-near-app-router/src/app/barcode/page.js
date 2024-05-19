@@ -17,7 +17,10 @@ const BarcodePage = () => {
     }
     if (typeof barcode === "string") {
       console.log("Detected barcode:", barcode);
-      router.push("/", { query: { barcode } });
+      // Store the barcode in local storage
+      localStorage.setItem("detectedBarcode", barcode);
+      // Navigate to the home page
+      router.push("/");
     } else {
       console.error("Detected barcode is not a string:", barcode);
     }

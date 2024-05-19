@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import apple from "../../public/apple.png";
 import banana from "../../public/banana.png";
 import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
-import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const router = useRouter();
-  const barcode = router.query ? router.query.barcode : null;
+const Home = ({ searchParams }) => {
   const [listOfItems, setListOfItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showDiscountMessage, setShowDiscountMessage] = useState(false);
   const [totalFruits, setTotalFruits] = useState(0);
+  const [barcode, setBarcode] = useState(null);
 
   useEffect(() => {
     // Calculate the total number of fruits
@@ -32,6 +30,14 @@ export default function Home() {
       setShowDiscountMessage(true);
     } else {
       setShowDiscountMessage(false);
+    }
+
+    const storedBarcode = localStorage.getItem("detectedBarcode");
+    if (storedBarcode) {
+      setBarcode(storedBarcode);
+      console.log("GOT EM BOYS:", storedBarcode);
+      // send to API function here
+      localStorage.removeItem("detectedBarcode");
     }
   }, [listOfItems]);
 
@@ -207,4 +213,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;
