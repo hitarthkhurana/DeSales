@@ -10,7 +10,11 @@ import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
 
 function Home() {
-  const [listOfItems, setListOfItems] = useState([]);
+  const [listOfItems, setListOfItems] = useState(
+    localStorage.getItem("cartItems")
+      ? JSON.parse(localStorage.getItem("cartItems"))
+      : []
+  );
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showDiscountMessage, setShowDiscountMessage] = useState(false);
@@ -104,19 +108,24 @@ function Home() {
         (item) => item.name === selectedProduct.name
       );
 
+      let updatedItems;
+
       if (existingItemIndex !== -1) {
-        const updatedItems = [...listOfItems];
+        updatedItems = [...listOfItems];
         updatedItems[existingItemIndex].quantity += selectedQuantity;
-        setListOfItems(updatedItems);
       } else {
-        setListOfItems([...listOfItems, newItem]);
+        updatedItems = [...listOfItems, newItem];
       }
+
+      setListOfItems(updatedItems);
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
     }
   };
 
   const handleClearCart = () => {
     setListOfItems([]);
     setShowDiscountMessage(false);
+    localStorage.removeItem("cartItems");
   };
 
   const allItems = [
