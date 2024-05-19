@@ -101,28 +101,6 @@ function Home() {
   }, [listOfItems]);
 
   const handleClickEvent = async () => {
-    const customerData = {
-      id: "123456",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phone: "123-456-7890",
-      address: {
-        street: "123 Main St",
-        city: "Anytown",
-        state: "CA",
-        zip: "12345",
-      },
-      orders: listOfItems.map((item) => ({
-        orderId: "12345",
-        product: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        last4Digits: "1234",
-        date: new Date().toISOString(),
-      })),
-    };
-
     const custData = {
       item_description: listOfItems.reduce((description, item) => {
         return description
@@ -146,6 +124,7 @@ function Home() {
           gas: "30000000000000",
           deposit: priceInNear,
         });
+
         console.log("Transaction successful:", transactionResult);
       } catch (error) {
         console.error("Transaction failed:", error);
@@ -154,11 +133,42 @@ function Home() {
       console.error("Wallet not signed in or contract not set up");
     }
 
-    console.log("Checkout completed!", customerData);
     window.alert("Checkout completed! Check out the blockchain backend!");
     localStorage.removeItem("cartItems");
     localStorage.removeItem("detectedBarcode");
-    // window.location.reload();
+    window.location.reload();
+  };
+
+  const handleNFTMinting = async () => {
+    if (totalFruits >= 10) {
+      try {
+        const nftMintResult = await wallet.callMethod({
+          contractId: "hitarth.testnet",
+          method: "nft_mint",
+          args: {
+            token_id: Math.floor(Math.random() * 1000000).toString(),
+            receiver_id: "sargunbhatti.testnet",
+            token_metadata: {
+              title: "Healthy Grocery is GOOD, get a NFT for it!",
+              description: "POS NFT",
+              media:
+                "https://ipfs.io/ipfs/QmUxR9yhJvyapM8LWaMJDhcV9JYDYZtSkT3cJSbD5yroGZ/DALL·E%202024-05-19%2006.49.09%20-%20A%20digital%20image%20representing%20an%20NFT%20for%20a%20grocery%20order%20crypto%20wallet.%20The%20background%20should%20include%20elements%20like%20shopping%20carts,%20grocery%20items%20(appl.webp",
+              copies: 1,
+            },
+          },
+          gas: "30000000000000",
+          deposit: "1000000000000000000000000",
+        });
+
+        console.log("NFT minting successful:", nftMintResult);
+      } catch (error) {
+        console.error("Transaction failed:", error);
+      }
+    } else {
+      window.alert(
+        "You need to have more than 10 fruits in your cart to mint an NFT!"
+      );
+    }
   };
 
   const handleAddToCart = () => {
@@ -224,7 +234,7 @@ function Home() {
     <div className="container p-5">
       <NavBar />
       <div className="border border-info rounded p-3">
-        <h1 className="fs-2 mb-3 text-center">Walmart PoS</h1>
+        <h1 className="fs-2 mb-3 text-center">DeSales Self-Checkout</h1>
         <div className="row">
           <div className="offset-md-1 col-md-4">
             <div className="text-center mb-3">
@@ -303,6 +313,12 @@ function Home() {
               >
                 Checkout
               </button>
+              <button
+                className="btn btn-primary mt-3"
+                onClick={handleNFTMinting}
+              >
+                Mint NFT
+              </button>
             </div>
           </div>
         </div>
@@ -312,9 +328,6 @@ function Home() {
           You have 10 or more fruits in your cart! You get a 30 cents discount!
         </div>
       )}
-      <div className="text-center mt-3">
-        <Link href="/hello-near">Read the APIs</Link>
-      </div>
     </div>
   );
 }
