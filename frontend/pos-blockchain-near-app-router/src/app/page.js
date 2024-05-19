@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
 import "bootstrap/dist/css/bootstrap.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -143,15 +142,17 @@ export default function Home() {
                 }
                 min={0}
               />
-              <button className="btn btn-success" onClick={handleAddToCart}>
-                Add to Cart
-              </button>
-              <button className="btn btn-danger mt-2" onClick={handleClearCart}>
-                Clear Cart
-              </button>
+              <div className="d-flex justify-content-between">
+                <button className="btn btn-success" onClick={handleAddToCart}>
+                  Add to Cart
+                </button>
+                <button className="btn btn-danger" onClick={handleClearCart}>
+                  Clear Cart
+                </button>
+              </div>
             </div>
             <div className="row mb-3">
-              <Link href={"/barcode"}>OR scan barcode</Link>
+              <Link href="/barcode">OR scan barcode</Link>
             </div>
             <h3>Cart</h3>
             {listOfItems.map((item, index) => (
@@ -199,7 +200,7 @@ export default function Home() {
         </div>
       )}
       <div className="text-center mt-3">
-        <Link href={"/hello-near"}>Read the APIs</Link>
+        <Link href="/hello-near">Read the APIs</Link>
       </div>
     </div>
   );

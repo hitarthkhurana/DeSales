@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import BarcodeScanner from "../../components/BarcodeScanner";
+import Link from "next/link";
 
 const BarcodePage = () => {
   const [detectedBarcode, setDetectedBarcode] = useState(null);
@@ -27,11 +28,14 @@ const BarcodePage = () => {
     >
       <div>
         <h1>Scan your product via Barcode!</h1>
-        <BarcodeScanner
-          ref={scannerRef}
-          onBarcodeDetect={handleBarcodeDetect}
-        />
+        <BarcodeScanner 
+ref ={scannerRef}        onBarcodeDetect={handleBarcodeDetect} />
         {detectedBarcode && <p>Detected Barcode: {detectedBarcode}</p>}
+        <Link href="/">
+          <button className="btn btn-primary mt-3">
+            Return to Cart
+          </button>
+        </Link>
       </div>
     </div>
   );
