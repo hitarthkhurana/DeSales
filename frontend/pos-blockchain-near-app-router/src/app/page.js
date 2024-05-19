@@ -36,7 +36,16 @@ const Home = ({ searchParams }) => {
     if (storedBarcode) {
       setBarcode(storedBarcode);
       console.log("GOT EM BOYS:", storedBarcode);
-      // send to API function here
+
+      fetch(
+        "https://world.openfoodfacts.org/api/v0/product/" +
+          storedBarcode +
+          ".json"
+      )
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error("Error:", error));
+
       localStorage.removeItem("detectedBarcode");
     }
   }, [listOfItems]);
