@@ -82,6 +82,11 @@ export default function Home() {
     }
   };
 
+  const handleClearCart = () => {
+    setListOfItems([]);
+    setShowDiscountMessage(false);
+  };
+
   const allItems = [
     {
       name: "Banana",
@@ -106,7 +111,7 @@ export default function Home() {
   );
   const tax = totalSum * 0.13;
   const discount = totalFruits >= 10 ? 0.30 : 0;
-  const totalMoney = totalSum + tax;
+  const totalMoney = totalSum + tax - discount;
 
   return (
     <div className="container p-5">
@@ -140,6 +145,9 @@ export default function Home() {
               />
               <button className="btn btn-success" onClick={handleAddToCart}>
                 Add to Cart
+              </button>
+              <button className="btn btn-danger mt-2" onClick={handleClearCart}>
+                Clear Cart
               </button>
             </div>
             <h3>Cart</h3>
@@ -184,7 +192,7 @@ export default function Home() {
       </div>
       {showDiscountMessage && (
         <div className="alert alert-success mt-3 text-center">
-          You have 10 or more fruits in your cart, healthy boi! You get a 30 cents discount!
+          You have 10 or more fruits in your cart! You get a 30 cents discount!
         </div>
       )}
       <div className="text-center mt-3">
