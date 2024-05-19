@@ -150,6 +150,9 @@ export default function Home() {
                 Clear Cart
               </button>
             </div>
+            <div className="row mb-3">
+              <Link href={"/barcode"}>OR scan barcode</Link>
+            </div>
             <h3>Cart</h3>
             {listOfItems.map((item, index) => (
               <div className="row mb-3" key={index}>
