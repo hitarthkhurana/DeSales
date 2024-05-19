@@ -19,11 +19,11 @@ export default function Home() {
   useEffect(() => {
     // Calculate the total number of fruits
     const fruitsCount = listOfItems
-      .filter(item => item.name === "Apple" || item.name === "Banana")
+      .filter((item) => item.name === "Apple" || item.name === "Banana")
       .reduce((total, item) => total + item.quantity, 0);
-    
+
     setTotalFruits(fruitsCount);
-    
+
     // Check if the total fruits are 10 or more to show the discount message
     if (fruitsCount >= 10) {
       setShowDiscountMessage(true);
@@ -109,7 +109,7 @@ export default function Home() {
     0
   );
   const tax = totalSum * 0.13;
-  const discount = totalFruits >= 10 ? 0.30 : 0;
+  const discount = totalFruits >= 10 ? 0.3 : 0;
   const totalMoney = totalSum + tax - discount;
 
   return (
