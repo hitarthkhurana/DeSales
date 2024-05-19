@@ -17,7 +17,7 @@ const BarcodePage = () => {
     }
     if (typeof barcode === "string") {
       console.log("Detected barcode:", barcode);
-      router.push("/");
+      router.push("/", { query: { barcode } });
     } else {
       console.error("Detected barcode is not a string:", barcode);
     }
