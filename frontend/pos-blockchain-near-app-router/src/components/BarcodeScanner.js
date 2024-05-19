@@ -1,7 +1,15 @@
-import { useEffect, useRef } from "react";
+import {
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+  useState,
+} from "react";
 
-const BarcodeScanner = ({ onBarcodeDetect }) => {
+const BarcodeScanner = ({ onBarcodeDetect }, ref) => {
   const videoRef = useRef(null);
+  let intervalId = useRef(null);
+  const [isScanning, setIsScanning] = useState(true);
 
   useEffect(() => {
     const startBarcodeScanner = async () => {
@@ -12,9 +20,11 @@ const BarcodeScanner = ({ onBarcodeDetect }) => {
           const stream = await navigator.mediaDevices.getUserMedia({
             video: true,
           });
-          videoRef.current.srcObject = stream;
+          if (isScanning) {
+            videoRef.current.srcObject = stream;
+          }
 
-          setInterval(async () => {
+          intervalId.current = setInterval(async () => {
             try {
               const barcodes = await barcodeDetector.detect(videoRef.current);
               if (barcodes.length > 0) {
@@ -37,11 +47,28 @@ const BarcodeScanner = ({ onBarcodeDetect }) => {
     return () => {
       if (videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
       }
     };
-  }, [onBarcodeDetect]);
+  }, [onBarcodeDetect, isScanning]);
+
+  useImperativeHandle(ref, () => ({
+    stopBarcodeScanner: () => {
+      if (videoRef.current.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+      }
+      setIsScanning(false);
+    },
+  }));
 
   return <video ref={videoRef} autoPlay playsInline />;
 };
 
-export default BarcodeScanner;
+export default forwardRef(BarcodeScanner);
