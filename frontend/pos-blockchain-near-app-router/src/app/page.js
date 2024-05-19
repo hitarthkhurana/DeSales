@@ -9,13 +9,12 @@ import banana from "../../public/banana.png";
 import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
 
-const Home = ({ searchParams }) => {
+function Home() {
   const [listOfItems, setListOfItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showDiscountMessage, setShowDiscountMessage] = useState(false);
   const [totalFruits, setTotalFruits] = useState(0);
-  const [barcode, setBarcode] = useState(null);
 
   useEffect(() => {
     // Calculate the total number of fruits
@@ -34,19 +33,35 @@ const Home = ({ searchParams }) => {
 
     const storedBarcode = localStorage.getItem("detectedBarcode");
     if (storedBarcode) {
-      setBarcode(storedBarcode);
       console.log("GOT EM BOYS:", storedBarcode);
 
-      fetch(
-        "https://world.openfoodfacts.org/api/v0/product/" +
-          storedBarcode +
-          ".json"
-      )
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error("Error:", error));
+      async function fetchInformation(barcode) {
+        const data = await fetch(
+          "https://world.openfoodfacts.org/api/v0/product/" + barcode + ".json"
+        )
+          .then((response) => response.json())
+          .catch((error) => console.error("Error:", error));
 
-      localStorage.removeItem("detectedBarcode");
+        return data;
+      }
+
+      (async () => {
+        const response = await fetchInformation(storedBarcode);
+        const productName = response.product.product_name;
+        const productImage = response.product.image_url;
+        console.log("Product Name:", productName);
+        console.log("Product Image:", productImage);
+        setListOfItems([
+          ...listOfItems,
+          {
+            name: productName,
+            img: productImage,
+            price: 1.99,
+            quantity: 1,
+          },
+        ]);
+        localStorage.removeItem("detectedBarcode");
+      })();
     }
   }, [listOfItems]);
 
@@ -80,7 +95,7 @@ const Home = ({ searchParams }) => {
     if (selectedProduct && selectedQuantity > 0) {
       const newItem = {
         name: selectedProduct.name,
-        imgName: selectedProduct.imgName,
+        img: selectedProduct.img,
         price: selectedProduct.price,
         quantity: selectedQuantity,
       };
@@ -107,17 +122,17 @@ const Home = ({ searchParams }) => {
   const allItems = [
     {
       name: "Banana",
-      imgName: banana,
+      img: banana,
       price: 1.74,
     },
     {
       name: "Apple",
-      imgName: apple,
+      img: apple,
       price: 2.7,
     },
     {
       name: "Doritos",
-      imgName: doritos,
+      img: doritos,
       price: 3.99,
     },
   ];
@@ -176,7 +191,12 @@ const Home = ({ searchParams }) => {
             {listOfItems.map((item, index) => (
               <div className="row mb-3" key={index}>
                 <div className="col-md-4">
-                  <Image src={item.imgName} alt={item.name} width={100} />
+                  <Image
+                    src={item.img}
+                    alt={item.name}
+                    width={100}
+                    height={100}
+                  />
                 </div>
                 <div className="col-md-8">
                   <div>
@@ -222,6 +242,6 @@ const Home = ({ searchParams }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Home;
