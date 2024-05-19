@@ -8,8 +8,11 @@ import apple from "../../public/apple.png";
 import banana from "../../public/banana.png";
 import doritos from "../../public/doritos.png";
 import NavBar from "../components/NavBar";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  const barcode = router.query ? router.query.barcode : null;
   const [listOfItems, setListOfItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);

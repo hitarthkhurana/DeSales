@@ -12,11 +12,13 @@ const BarcodePage = () => {
 
   const handleBarcodeDetect = (barcode) => {
     setDetectedBarcode(barcode);
-    console.log(barcode);
     if (scannerRef.current) {
       scannerRef.current.stopBarcodeScanner();
     }
-    router.push("/");
+    router.push({
+      pathname: "/",
+      query: { barcode },
+    });
   };
 
   return (

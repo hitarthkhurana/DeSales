@@ -20,15 +20,24 @@ const BarcodeScanner = ({ onBarcodeDetect }) => {
             videoRef.current.srcObject = stream;
           }
 
+<<<<<<< HEAD
           intervalId = setInterval(async () => {
             if (videoRef.current) {
               try {
+=======
+          intervalId.current = setInterval(async () => {
+            try {
+              if (videoRef.current instanceof HTMLVideoElement) {
+>>>>>>> db75c33 (just saving changes)
                 const barcodes = await barcodeDetector.detect(videoRef.current);
                 if (barcodes.length > 0) {
                   onBarcodeDetect(barcodes[0].rawValue);
                 }
+<<<<<<< HEAD
               } catch (error) {
                 console.error("Barcode detection error:", error);
+=======
+>>>>>>> db75c33 (just saving changes)
               }
             }
           }, 1000);
