@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import "bootstrap/dist/css/bootstrap.css";
 import Image from "next/image";
@@ -14,6 +14,24 @@ export default function Home() {
   const [listOfItems, setListOfItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [showDiscountMessage, setShowDiscountMessage] = useState(false);
+  const [totalFruits, setTotalFruits] = useState(0);
+
+  useEffect(() => {
+    // Calculate the total number of fruits
+    const fruitsCount = listOfItems
+      .filter(item => item.name === "Apple" || item.name === "Banana")
+      .reduce((total, item) => total + item.quantity, 0);
+    
+    setTotalFruits(fruitsCount);
+    
+    // Check if the total fruits are 10 or more to show the discount message
+    if (fruitsCount >= 10) {
+      setShowDiscountMessage(true);
+    } else {
+      setShowDiscountMessage(false);
+    }
+  }, [listOfItems]);
 
   const handleClickEvent = () => {
     const customerData = {
@@ -87,6 +105,7 @@ export default function Home() {
     0
   );
   const tax = totalSum * 0.13;
+  const discount = totalFruits >= 10 ? 0.30 : 0;
   const totalMoney = totalSum + tax;
 
   return (
@@ -146,6 +165,11 @@ export default function Home() {
               <div className="text-center">
                 <h4 className="fw-bold">Subtotal: ${totalSum.toFixed(2)}</h4>
                 <h4 className="fw-bold">Tax (13%): ${tax.toFixed(2)}</h4>
+                {totalFruits >= 10 && (
+                  <h4 className="fw-bold text-success">
+                    Discount: -${discount.toFixed(2)}
+                  </h4>
+                )}
                 <h2 className="fw-bold">Total: ${totalMoney.toFixed(2)}</h2>
               </div>
               <button
@@ -158,6 +182,11 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {showDiscountMessage && (
+        <div className="alert alert-success mt-3 text-center">
+          You have 10 or more fruits in your cart, healthy boi! You get a 30 cents discount!
+        </div>
+      )}
       <div className="text-center mt-3">
         <Link href={"/hello-near"}>Read the APIs</Link>
       </div>
