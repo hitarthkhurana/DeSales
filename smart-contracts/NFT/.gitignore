@@ -13,7 +13,7 @@ package-lock.json
 
 # testing
 /coverage
-
+/target
 # production
 /build
 
